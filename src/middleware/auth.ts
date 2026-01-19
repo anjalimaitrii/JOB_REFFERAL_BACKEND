@@ -17,13 +17,13 @@ export const authMiddleware = (
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any
 
-    // 👇 user info request me attach kar di
+ 
     ;(req as any).user = {
       _id: decoded._id,
       role: decoded.role,
     }
 
-    next() // request aage jaane do
+    next() 
   } catch {
     res.status(401).json({ message: 'Invalid token' })
   }

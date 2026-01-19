@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import connectDB from './config/db';
 import companyRoutes from './routes/company';
+import requestRoutes from './routes/request';
 
 
 
@@ -20,6 +21,7 @@ app.get('/api/health',(_req:Request,res:Response)=>{
 
 app.use('/api/auth', authRoutes)
 app.use("/api/company", companyRoutes);
+app.use("/api/request", requestRoutes);
 
 
 
