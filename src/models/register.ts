@@ -25,10 +25,10 @@ export const register = async (req: Request, res: Response) => {
 
     
 
-    if (role === 'employee' && (!company || !designation)) {
+    if (role === 'employee' && !designation) {
       return res
         .status(400)
-        .json({ message: 'Company and job title are required for employees' })
+        .json({ message: 'job title is required for employees' })
     }
 
     const existingUser = await User.findOne({ email })
