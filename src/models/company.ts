@@ -1,5 +1,16 @@
 import mongoose from "mongoose";
 
+const JobSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  { _id: true }
+);
+
 const CompanySchema = new mongoose.Schema(
   {
     name: {
@@ -26,6 +37,7 @@ const CompanySchema = new mongoose.Schema(
     website: {
       type: String,
     },
+    jobs: [JobSchema],
   },
   { timestamps: true }
 );

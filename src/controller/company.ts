@@ -16,6 +16,7 @@ export const createCompany = async (req: Request, res: Response) => {
       otherLocations,
       companySize,
       website,
+      jobs
     } = req.body;
 
     if (!name || !location) {
@@ -32,6 +33,7 @@ export const createCompany = async (req: Request, res: Response) => {
       otherLocations,
       companySize,
       website,
+      jobs
     });
 
     return res.status(201).json({
