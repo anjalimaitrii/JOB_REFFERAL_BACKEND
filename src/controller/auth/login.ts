@@ -38,6 +38,14 @@ export const login = async (req: Request, res: Response) => {
       message: 'Login successful',
       token,
       role: user.role,
+       user: {
+        _id: user._id,
+        role: user.role,
+        company: user.company,    
+        designation: user.designation,
+        name: user.name,
+        email: user.email,
+      },
     })
   } catch (error) {
   console.error('LOGIN ERROR 👉', error);

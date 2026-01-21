@@ -96,3 +96,25 @@ export const updateRequestStatus = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const getMySentRequests = async (req: Request, res: Response) => {
+  try {
+    const studentId = (req as any).user._id;
+
+    const requests = await RequestModel.find({
+      sender: studentId,
+    })
+      .populate("receiver", "name email")
+      .populate("company", "name jobs")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "Student requests fetched",
+      data: requests,
+    });
+  } catch (error) {
+    console.error("GET MY SENT REQUESTS ERROR 👉", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
