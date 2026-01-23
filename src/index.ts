@@ -9,6 +9,7 @@ import {Server} from 'socket.io';
 import http from 'http';
 import { initSocket } from "./socket";
 import chatRoutes from './routes/chat';
+import collegeRoutes from './routes/college';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use('/api/auth', authRoutes)
 app.use("/api/company", companyRoutes);
 app.use("/api/request", requestRoutes);
 app.use("/api/chat", chatRoutes);
+app.use('/api/college',collegeRoutes); 
 
 
 
