@@ -10,6 +10,21 @@ export const updateUser = async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Unauthorized' })
     }
 
+    const { company, designation } = req.body;
+
+    console.log("Update User Request Body:", req.body);
+    console.log("Original company:", company, "Type:", typeof company);
+    console.log("Original designation:", designation, "Type:", typeof designation);
+
+    if (company === "") {
+      console.log("Sanitizing company to null");
+      req.body.company = null;
+    }
+    if (designation === "") {
+      console.log("Sanitizing designation to null");
+      req.body.designation = null;
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       user._id,
       req.body,        

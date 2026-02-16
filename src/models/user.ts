@@ -91,6 +91,7 @@ const userSchema = new mongoose.Schema(
     /* ================= JOB INFO (EMPLOYEE) ================= */
     company: {
       type: String,
+      ref: "Company",
       default: '',
     },
     experienceLevel: {
@@ -98,7 +99,7 @@ const userSchema = new mongoose.Schema(
       default: '',
     },
     designation: {
-      type: String,
+      type: String, // String to support "" in existing data
       default: '',
     },
 
@@ -134,7 +135,15 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true }
-)
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+);
+
+// Virtual for populating company details when 'company' is a valid ObjectId string
+userSchema.virtual("companyDetails", {
+  ref: "Company",
+  localField: "company",
+  foreignField: "_id",
+  justOne: true,
+});
 
 export default mongoose.model('User', userSchema)
