@@ -10,6 +10,7 @@ import http from 'http';
 import { initSocket } from "./socket";
 import chatRoutes from './routes/chat';
 import collegeRoutes from './routes/college';
+import adminRoutes from './routes/admin';
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use("/api/company", companyRoutes);
 app.use("/api/request", requestRoutes);
 app.use("/api/chat", chatRoutes);
 app.use('/api/college',collegeRoutes); 
+app.use('/api/admin', adminRoutes);
 
 
 

@@ -33,7 +33,8 @@ export const createCompany = async (req: Request, res: Response) => {
       otherLocations,
       companySize,
       website,
-      jobs
+      jobs,
+      isVerified: false, // New companies need admin approval
     });
 
     return res.status(201).json({
@@ -50,7 +51,8 @@ export const createCompany = async (req: Request, res: Response) => {
 
 export const getAllCompanies = async (_req: Request, res: Response) => {
   try {
-    const companies = await Company.find().sort({ createdAt: -1 });
+    // Only return verified companies for employee registration
+    const companies = await Company.find({ isVerified: true }).sort({ createdAt: -1 });
 
     return res.status(200).json({
       data: companies,
@@ -85,6 +87,64 @@ export const getCompanyById = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       message: "Error fetching company",
+      error,
+    });
+  }
+};
+
+/**
+ * GET /api/company/admin/all
+ * Get all companies for admin (including unverified)
+ */
+export const getAllCompaniesForAdmin = async (_req: Request, res: Response) => {
+  try {
+    const companies = await Company.find().sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      data: companies,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error fetching companies",
+      error,
+    });
+  }
+};
+
+/**
+ * PATCH /api/company/:id/verify
+ * Verify or reject a company
+ */
+export const verifyCompany = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { isVerified } = req.body;
+
+    if (typeof isVerified !== "boolean") {
+      return res.status(400).json({
+        message: "isVerified must be a boolean value",
+      });
+    }
+
+    const company = await Company.findByIdAndUpdate(
+      id,
+      { isVerified },
+      { new: true }
+    );
+
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: `Company ${isVerified ? "verified" : "rejected"} successfully`,
+      data: company,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error updating company verification status",
       error,
     });
   }

@@ -37,6 +37,10 @@ const CompanySchema = new mongoose.Schema(
     website: {
       type: String,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
     jobs: [JobSchema],
   },
   { timestamps: true }
