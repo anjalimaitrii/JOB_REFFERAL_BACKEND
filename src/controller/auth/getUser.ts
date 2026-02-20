@@ -70,3 +70,21 @@ export const getEmployeesByCompany = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getAllEmployees = async (req: Request, res: Response) => {
+  try {
+    const employees = await User.find({
+      role: "employee",
+    }).populate("company")
+    .select("-password");
+
+    return res.status(200).json({
+      data: employees,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error fetching employees",
+      error,
+    });
+  }
+};

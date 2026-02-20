@@ -5,7 +5,11 @@ export interface IMessage extends Document {
   receiver: mongoose.Types.ObjectId;
   request: mongoose.Types.ObjectId;
   text: string;
+  image?: string;
+  document?: string;
+  gif?: string;
   createdAt: Date;
+  isRead: boolean;
 }
 
 const MessageSchema = new Schema<IMessage>(
@@ -29,7 +33,12 @@ const MessageSchema = new Schema<IMessage>(
       type: String,
       required: true,
     },
+    image: String,
+    document: String,
+    gif: String,
+    isRead: { type: Boolean, default: false },
   },
+  
   {
     timestamps: true, 
   }

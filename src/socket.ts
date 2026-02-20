@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken"
 import { Server, Socket } from "socket.io"
+import Notification from "./models/notification"
 import Message from "./models/message"
 
 export const initSocket = (io: Server) => {
@@ -9,7 +10,14 @@ export const initSocket = (io: Server) => {
     const token = socket.handshake.auth?.token
 
     console.log(" SOCKET TOKEN RECEIVED:", token)
+    
+  const user = (socket as any).user
 
+  //  USER PERSONAL ROOM
+  if (user?._id) {
+    socket.join(user._id)
+    console.log(" Joined user notification room:", user._id)
+  }
 
     if (!token) {
       console.log(" No token in handshake (allowed)")
@@ -38,28 +46,46 @@ export const initSocket = (io: Server) => {
     })
 
     
-    socket.on("send-message", async ({ requestId, receiver, text }) => {
-      const user = (socket as any).user
-      if (!user) return
+  socket.on("send-message", async ({ requestId, receiver, text }) => {
+  const user = (socket as any).user
+  if (!user) return
 
-      const msg = await Message.create({
-        sender: user._id,
-        receiver,
-        request: requestId,
-        text,
-      })
+  //  Save message
+  const msg = await Message.create({
+    sender: user._id,
+    receiver,
+    request: requestId,
+    text,
+  })
 
-      socket.to(requestId).emit("receive-message", {
-        _id: msg._id,
-        sender: user._id,
-        receiver,
-        text,
-        createdAt: msg.createdAt,
-      })
-      
-  
+  //  Save notification in DB
+  const notification = await Notification.create({
+    receiver,
+    sender: user._id,
+    type: "message",
+    request: requestId,
+  })
 
-    })
+  //  Emit chat message realtime
+  socket.to(requestId).emit("receive-message", {
+    _id: msg._id,
+    sender: user._id,
+    receiver,
+    text,
+    createdAt: msg.createdAt,
+  })
+
+  // Emit realtime notification
+  io.to(receiver).emit("new-notification", {
+    _id: notification._id,
+    sender: user._id,
+    type: "message",
+    request: requestId,
+    isRead: false,
+    createdAt: notification.createdAt,
+  })
+})
+
 
     socket.on("disconnect", () => {
       console.log(" Socket disconnected:", socket.id)

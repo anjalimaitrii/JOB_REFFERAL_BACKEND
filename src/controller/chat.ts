@@ -10,6 +10,11 @@ export const getChatByRequest = async (req: Request, res: Response) => {
       request: requestId,
       $or: [{ sender: userId }, { receiver: userId }],
     }).sort({ createdAt: 1 });
+    
+    await Message.updateMany(
+      { request: requestId, receiver: userId, isRead: false },
+      { isRead: true }
+    );
 
     res.status(200).json({
       message: "Chat fetched",
