@@ -24,10 +24,16 @@ export const updateUser = async (req: Request, res: Response) => {
       console.log("Sanitizing designation to null");
       req.body.designation = null;
     }
+    if (company && company.length !== 24) {
+      delete req.body.company
+    }
 
+    if (designation && designation.length !== 24) {
+      delete req.body.designation
+    }
     const updatedUser = await User.findByIdAndUpdate(
       user._id,
-      req.body,        
+      req.body,
       { new: true }
     ).select('-password')
 
@@ -38,7 +44,7 @@ export const updateUser = async (req: Request, res: Response) => {
   } catch (err) {
     console.error('UPDATE USER ERROR 👉', err)
     res.status(500).json({ message: 'Server error' })
-  
-  
+
+
   }
 }

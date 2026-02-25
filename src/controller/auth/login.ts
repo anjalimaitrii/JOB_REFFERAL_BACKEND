@@ -5,9 +5,9 @@ import jwt from 'jsonwebtoken'
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password, loginAs } = req.body
+    const { email, password } = req.body
 
-    if (!email || !password || !loginAs) {
+    if (!email || !password) {
       return res.status(400).json({ message: 'Missing credentials' })
     }
 
@@ -21,12 +21,7 @@ export const login = async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Invalid credentials' })
     }
 
-    // Role check
-    if (user.role !== loginAs) {
-      return res.status(403).json({
-        message: `You are not authorized as ${loginAs}`,
-      })
-    }
+
 
     const token = jwt.sign(
       { _id: user._id, role: user.role },
@@ -38,18 +33,18 @@ export const login = async (req: Request, res: Response) => {
       message: 'Login successful',
       token,
       role: user.role,
-       user: {
+      user: {
         _id: user._id,
         role: user.role,
-        company: user.company,    
+        company: user.company,
         designation: user.designation,
         name: user.name,
         email: user.email,
       },
     })
   } catch (error) {
-  console.error('LOGIN ERROR 👉', error);
-  res.status(500).json({ message: 'Server error' });
-}
+    console.error('LOGIN ERROR 👉', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 
 }

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import SuccessStory from "../models/SuccessStory";
+import SuccessStory from "../models/successStory";
+
 
 export const getSuccessStories = async (
   req: Request,
@@ -8,6 +9,7 @@ export const getSuccessStories = async (
   try {
     const stories = await SuccessStory.find()
       .populate("user", "name")
+      .populate("company")
       .sort({ createdAt: -1 });
 
     const formatted = stories.map((story: any) => ({
@@ -16,6 +18,7 @@ export const getSuccessStories = async (
       role: story.role,
       rating: story.rating,
       comment: story.comment,
+      company: story.company?.name || "",
     }));
 
     return res.status(200).json({
@@ -43,9 +46,9 @@ export const createSuccessStory = async (
       });
     }
 
-    const { role, rating, comment } = req.body;
+    const { role, rating, comment, company } = req.body;
 
-    if (!role || !rating || !comment) {
+    if (!role || !rating || !comment || !company) {
       return res.status(400).json({
         message: "All fields are required",
       });
@@ -56,6 +59,7 @@ export const createSuccessStory = async (
       role,
       rating,
       comment,
+      company,
     });
 
     return res.status(201).json({
