@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/user";
 import Company from "../models/company";
+import SuccessStory from "../models/successStory";
 
 export const getAdminStats = async (_req: Request, res: Response) => {
   try {
@@ -8,6 +9,8 @@ export const getAdminStats = async (_req: Request, res: Response) => {
     const employeeCount = await User.countDocuments({ role: "employee" });
     const totalCompanies = await Company.countDocuments();
     const pendingCompanies = await Company.countDocuments({ isVerified: false });
+    const totalStories = await SuccessStory.countDocuments();
+    const pendingStories = await SuccessStory.countDocuments({ status: "pending" });
 
     // Recent registrations (last 5)
     const recentUsers = await User.find()
@@ -27,6 +30,8 @@ export const getAdminStats = async (_req: Request, res: Response) => {
           employees: employeeCount,
           totalCompanies: totalCompanies,
           pendingCompanies: pendingCompanies,
+          totalStories: totalStories,
+          pendingStories: pendingStories,
         },
         recentUsers,
         recentCompanies,
@@ -43,7 +48,7 @@ export const getAdminStats = async (_req: Request, res: Response) => {
 export const getUsersByRole = async (req: Request, res: Response) => {
   try {
     const { role } = req.params;
-    
+
     if (role !== "student" && role !== "employee") {
       return res.status(400).json({ message: "Invalid role specified" });
     }
