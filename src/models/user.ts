@@ -90,7 +90,7 @@ const userSchema = new mongoose.Schema(
 
     /* ================= JOB INFO (EMPLOYEE) ================= */
     company: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
       default: '',
     },

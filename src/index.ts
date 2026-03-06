@@ -14,12 +14,15 @@ import collegeRoutes from './routes/college';
 import adminRoutes from './routes/admin';
 import notificationRoutes from './routes/notification';
 import successStoriesRoutes from './routes/successStories';
+import postRoutes from './routes/post'
+import followRoutes from './routes/follow'
 
 
 const app = express();
 connectDB();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', message: 'Backend Connected' })
@@ -33,6 +36,8 @@ app.use('/api/college', collegeRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/success-stories', successStoriesRoutes);
+app.use('/api/posts', postRoutes)
+app.use('/api/follow', followRoutes)
 
 
 
