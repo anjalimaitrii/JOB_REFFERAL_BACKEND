@@ -39,11 +39,11 @@ export const createPost = async (req: Request, res: Response) => {
 export const getCompanyPost = async (req: Request, res: Response) => {
     try {
         const { companyId } = req.params;
-        const posts = await Post.find({ companyId })
+        const posts = await Post.find({ company: companyId })
             .populate("employee", "name profilePhoto designation")
             .populate("company", "name logo jobs")
             .sort({ createdAt: -1 });
-
+        console.log("Posts found:", posts);
         res.status(200).json(posts);
     } catch (error) {
         res.status(500).json({ message: 'server error' })
