@@ -4,7 +4,7 @@ import {
     getExploreFeed,
 } from "../controller/follow";
 import {
-    createPost, getCompanyPost, toggleLike, addComment, deletePost, editPost, reportPost
+    createPost, getCompanyPost, toggleLike, addComment, deletePost, editPost, reportPost, getAllPostsForAdmin, deletePostByAdmin
 } from "../controller/post";
 import { authMiddleware } from "../middleware/auth";
 
@@ -19,5 +19,7 @@ router.get("/explore", authMiddleware, getExploreFeed);
 router.delete("/:postId", authMiddleware, deletePost);
 router.put("/:postId", authMiddleware, editPost);
 router.post("/report/:postId", authMiddleware, reportPost);
+router.get("/admin/posts", getAllPostsForAdmin)
+router.delete("/admin/posts/:id", deletePostByAdmin)
 
 export default router;

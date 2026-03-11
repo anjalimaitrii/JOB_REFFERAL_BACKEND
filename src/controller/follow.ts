@@ -11,7 +11,7 @@ export const followEmployee = async (req: Request, res: Response) => {
         const userId = (req as any).user._id;
         const role = (req as any).user.role;
 
-        if (role !== "student") {
+        if (role !== "student" && role !== "employee") {
             return res.status(403).json({ message: "Only students can follow" });
         }
 
@@ -98,8 +98,10 @@ export const getFollowingFeed = async (req: Request, res: Response) => {
 
 export const getExploreFeed = async (req: Request, res: Response) => {
     try {
-        const userId = (req as any).user?._id;
-        const posts = await Post.find()
+        const userId = new mongoose.Types.ObjectId((req as any).user._id);
+        const posts = await Post.find(
+
+        )
             .populate("employee", "name profilePhoto designation")
             .populate("company", "name logo jobs")
             .sort({ createdAt: -1 })
@@ -115,7 +117,7 @@ export const getExploreFeed = async (req: Request, res: Response) => {
             ...post.toObject(),
             isFollowing: followedEmployeeIds.includes(post.employee?._id?.toString())
         }));
-
+        console.log("Logged in userId:", userId);
         res.status(200).json(postsWithFollowStatus);
     } catch (error) {
         console.error("Explore feed error:", error);
