@@ -77,6 +77,33 @@ export const toggleLike = async (req: Request, res: Response) => {
     }
 }
 
+export const disLike = async (req: Request, res: Response) => {
+    try {
+        const { postId } = req.params;
+        const userId = (req as any).user._id;
+
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({ message: 'post not found' });
+        }
+
+        const dislikes = (post.dislikes as any) || [];
+        const dislikeIndex = dislikes.indexOf(userId);
+
+        if (dislikeIndex === -1) {
+            dislikes.push(userId);
+        } else {
+            dislikes.splice(dislikeIndex, 1);
+        }
+
+        post.dislikes = dislikes;
+        await post.save();
+        res.status(200).json({ message: 'dislike toggled', dislikes: post.dislikes });
+    } catch (error) {
+        res.status(500).json({ message: 'server error' });
+    }
+}
+
 export const addComment = async (req: Request, res: Response) => {
     try {
         const { postId } = req.params;

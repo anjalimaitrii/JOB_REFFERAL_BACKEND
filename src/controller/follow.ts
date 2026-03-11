@@ -83,7 +83,7 @@ export const getFollowingFeed = async (req: Request, res: Response) => {
         const posts = await Post.find({ employee: { $in: employeeIds } })
             .populate("employee", "name profilePhoto designation")
             .populate("company", "name logo jobs")
-            .sort({ createdAt: -1 });
+            .sort({ dislikes: 1, createdAt: -1 });
 
         const postsWithFollowStatus = posts.map(post => ({
             ...post.toObject(),
@@ -104,7 +104,7 @@ export const getExploreFeed = async (req: Request, res: Response) => {
         )
             .populate("employee", "name profilePhoto designation")
             .populate("company", "name logo jobs")
-            .sort({ createdAt: -1 })
+            .sort({ dislikes: 1, createdAt: -1 })
             .limit(20);
 
         let followedEmployeeIds: string[] = [];

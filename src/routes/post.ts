@@ -4,7 +4,7 @@ import {
     getExploreFeed,
 } from "../controller/follow";
 import {
-    createPost, getCompanyPost, toggleLike, addComment, deletePost, editPost, reportPost, getAllPostsForAdmin, deletePostByAdmin
+    createPost, getCompanyPost, toggleLike, addComment, deletePost, editPost, reportPost, getAllPostsForAdmin, deletePostByAdmin, disLike
 } from "../controller/post";
 import { authMiddleware } from "../middleware/auth";
 
@@ -12,6 +12,7 @@ const router = express.Router();
 
 router.post("/", authMiddleware, createPost);
 router.post("/like/:postId", authMiddleware, toggleLike);
+router.post("/dislike/:postId", authMiddleware, disLike);
 router.post("/comment/:postId", authMiddleware, addComment);
 router.get("/company/:companyId", authMiddleware, getCompanyPost);
 router.get("/following", authMiddleware, getFollowingFeed);
