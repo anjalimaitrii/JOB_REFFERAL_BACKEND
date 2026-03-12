@@ -40,6 +40,12 @@ export const login = async (req: Request, res: Response) => {
         designation: user.designation,
         name: user.name,
         email: user.email,
+        education: user.education,
+        experience: user.experience,
+        projects: user.projects,
+        skills: user.skills,
+        interests: user.interests,
+
       },
     })
   } catch (error) {
