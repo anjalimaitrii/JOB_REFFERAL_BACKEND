@@ -14,8 +14,9 @@ import collegeRoutes from './routes/college';
 import adminRoutes from './routes/admin';
 import notificationRoutes from './routes/notification';
 import successStoriesRoutes from './routes/successStories';
-import postRoutes from './routes/post'
-import followRoutes from './routes/follow'
+import postRoutes from './routes/post';
+import followRoutes from './routes/follow';
+import paymentRoutes from './routes/payment';
 
 
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/success-stories', successStoriesRoutes);
 app.use('/api/posts', postRoutes)
 app.use('/api/follow', followRoutes)
+app.use('/api/payment', paymentRoutes)
 
 
 

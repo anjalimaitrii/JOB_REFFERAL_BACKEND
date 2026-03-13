@@ -12,7 +12,14 @@ export const getNotifications = async (req: Request, res: Response) => {
     })
       .sort({ createdAt: -1 })
       .populate("sender", "name avatar")
-      .populate("request", "_id");
+      .populate({
+        path: "request",
+        select: "company role",
+        populate: {
+          path: "company",
+          select: "name"
+        }
+      });
 
     res.status(200).json({
       message: "Notifications fetched",

@@ -9,7 +9,7 @@ const requestSchema = new mongoose.Schema(
     },
     receiver: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", 
+      ref: "User",
       required: true,
     },
     company: {
@@ -18,13 +18,17 @@ const requestSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "accepted", "rejected"],
+      enum: ["pending", "accepted", "rejected", "completed"],
       default: "pending",
     },
-    role:{
-      type:String,
-      required:true
-
+    role: {
+      type: String,
+      required: true
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid"],
+      default: "pending"
     }
   },
   { timestamps: true }

@@ -53,7 +53,7 @@ export const getMyRequests = async (req: Request, res: Response) => {
     const requests = await RequestModel.find({
       receiver: employeeId,
     })
-      .populate("sender", "name email")
+      .populate("sender")
       .populate("company", "name jobs")
       .sort({ createdAt: -1 });
 
@@ -133,5 +133,31 @@ export const getMySentRequests = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("GET MY SENT REQUESTS ERROR 👉", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const markCompleted = async (req: Request, res: Response) => {
+  try {
+    const { requestId } = req.params;
+
+    const request = await RequestModel.findByIdAndUpdate(
+      requestId,
+      { status: "completed" },
+      { new: true }
+    );
+
+    await Notification.create({
+      receiver: request?.sender,
+      sender: request?.receiver,
+      type: "referral_completed",
+      request: request?._id,
+    });
+
+    res.json({
+      message: "Referral completed",
+      data: request,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error completing referral" });
   }
 };
