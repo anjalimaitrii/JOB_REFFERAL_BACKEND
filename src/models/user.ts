@@ -92,7 +92,6 @@ const userSchema = new mongoose.Schema(
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
-      default: '',
     },
     experienceLevel: {
       type: String,
@@ -133,6 +132,14 @@ const userSchema = new mongoose.Schema(
     isProfileComplete: {
       type: Boolean,
       default: false,
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    otp: {
+      type: String,
+      default: '',
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }

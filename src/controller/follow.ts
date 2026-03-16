@@ -82,15 +82,29 @@ export const getFollowingFeed = async (req: Request, res: Response) => {
 
         const posts = await Post.find({ employee: { $in: employeeIds } })
             .populate("employee", "name profilePhoto designation")
-            .populate("company", "name logo jobs")
-            .sort({ dislikes: 1, createdAt: -1 });
+            .populate("company", "name logo jobs");
 
-        const postsWithFollowStatus = posts.map(post => ({
-            ...post.toObject(),
-            isFollowing: true
-        }));
+        const filteredPosts = posts
+            .map(post => {
+                const likesCount = post.likes?.length || 0;
+                const dislikesCount = post.dislikes?.length || 0;
+                const score = likesCount - dislikesCount;
 
-        res.status(200).json(postsWithFollowStatus);
+                return {
+                    ...post.toObject(),
+                    score,
+                    isFollowing: true
+                };
+            })
+            .filter(post => post.score >= -4)
+            .sort((a, b) => {
+                if (b.score === a.score) {
+                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                }
+                return b.score - a.score;
+            });
+
+        res.status(200).json(filteredPosts);
     } catch {
         res.status(500).json({ message: "Server error" });
     }
@@ -99,12 +113,9 @@ export const getFollowingFeed = async (req: Request, res: Response) => {
 export const getExploreFeed = async (req: Request, res: Response) => {
     try {
         const userId = new mongoose.Types.ObjectId((req as any).user._id);
-        const posts = await Post.find(
-
-        )
+        const posts = await Post.find()
             .populate("employee", "name profilePhoto designation")
             .populate("company", "name logo jobs")
-            .sort({ dislikes: 1, createdAt: -1 })
             .limit(20);
 
         let followedEmployeeIds: string[] = [];
@@ -113,11 +124,25 @@ export const getExploreFeed = async (req: Request, res: Response) => {
             followedEmployeeIds = follows.map(f => f.employee.toString());
         }
 
-        const postsWithFollowStatus = posts.map(post => ({
-            ...post.toObject(),
-            isFollowing: followedEmployeeIds.includes(post.employee?._id?.toString())
-        }));
-        console.log("Logged in userId:", userId);
+        const postsWithFollowStatus = posts
+            .map(post => {
+                const likesCount = post.likes?.length || 0;
+                const dislikesCount = post.dislikes?.length || 0;
+                const score = likesCount - dislikesCount;
+
+                return {
+                    ...post.toObject(),
+                    score,
+                    isFollowing: followedEmployeeIds.includes(post.employee?._id?.toString())
+                };
+            })
+            .filter(post => post.score >= -4)
+            .sort((a, b) => {
+                if (b.score === a.score) {
+                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                }
+                return b.score - a.score;
+            });
         res.status(200).json(postsWithFollowStatus);
     } catch (error) {
         console.error("Explore feed error:", error);
