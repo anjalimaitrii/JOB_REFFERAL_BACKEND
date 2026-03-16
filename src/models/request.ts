@@ -25,11 +25,16 @@ const requestSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    amount: {
+      type: Number,
+      default: 0
+    },
+
     paymentStatus: {
       type: String,
       enum: ["pending", "paid"],
       default: "pending"
-    }
+    },
   },
   { timestamps: true }
 );

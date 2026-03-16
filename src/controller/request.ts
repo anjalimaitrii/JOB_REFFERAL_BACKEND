@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import RequestModel from "../models/request";
 import Notification from "../models/notification";
+import Payment from '../models/payment';
+import User from '../models/user';
 
 export const sendRequest = async (req: Request, res: Response) => {
   try {
@@ -145,6 +147,24 @@ export const markCompleted = async (req: Request, res: Response) => {
       { status: "completed" },
       { new: true }
     );
+    if (!request) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+
+    // find payment for this request
+    const payment = await Payment.findOne({ request: requestId });
+
+    if (payment && payment.status !== "released") {
+
+      // mark payment released
+      payment.status = "released";
+      await payment.save();
+
+      // credit employee wallet
+      await User.findByIdAndUpdate(request.receiver, {
+        $inc: { wallet: payment.amount }
+      });
+    }
 
     await Notification.create({
       receiver: request?.sender,

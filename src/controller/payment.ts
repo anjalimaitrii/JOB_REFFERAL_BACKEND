@@ -1,47 +1,30 @@
 import { Request, Response } from "express";
 import RequestModel from "../models/request";
 import Notification from "../models/notification";
+import Payment from "../models/payment";
 
-
-export const markPaymentSuccess = async (req: Request, res: Response) => {
-    try {
-        const { requestId } = req.params;
-
-        const request = await RequestModel.findByIdAndUpdate(
-            requestId,
-            { paymentStatus: "paid" },
-            { new: true }
-        );
-
-        res.json({
-            message: "Payment marked successful",
-            data: request
-        });
-    } catch (err) {
-        res.status(500).json({ message: "Payment update failed" });
-    }
-};
 
 export const paymentSuccess = async (req: Request, res: Response) => {
     try {
         const { requestId } = req.params;
+        const { amount } = req.body;
 
         const request = await RequestModel.findById(requestId);
 
         if (!request) {
             return res.status(404).json({ message: "Request not found" });
         }
-
-        // payment status update
         request.paymentStatus = "paid";
-
-        // 48 hours deadline
-        // request.referralDeadline = new Date(Date.now() + 48 * 60 * 60 * 1000);
+        request.amount = amount;
 
         await request.save();
-        console.log("Creating notification");
+        await Payment.create({
+            student: request.sender,
+            employee: request.receiver,
+            request: request._id,
+            amount: request.amount
+        });
 
-        // 🔔 Employee notification
         await Notification.create({
             receiver: request.receiver,
             sender: request.sender,
@@ -49,7 +32,6 @@ export const paymentSuccess = async (req: Request, res: Response) => {
             request: request._id,
         });
 
-        // 🔔 Student notification
         await Notification.create({
             receiver: request.sender,
             sender: request.receiver,
