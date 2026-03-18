@@ -5,6 +5,7 @@ import { updateUser } from '../controller/auth/updateUser'
 import { authMiddleware } from '../middleware/auth'
 import { getEmployeesByCompany, getUser, getAllEmployees } from '../controller/auth/getUser'
 import { sendOtp, verifyOtp } from '../controller/auth/otp'
+import { upload } from '../middleware/upload'
 
 const router = Router()
 
@@ -13,7 +14,7 @@ router.post('/login', login)
 router.get('/get', authMiddleware, getUser)
 router.get("/company/:companyId", getEmployeesByCompany);
 router.get("/employees", getAllEmployees);
-router.put('/update', authMiddleware, updateUser)
+router.put('/update', authMiddleware, upload.single('profilePhoto'), updateUser)
 router.post('/send-otp', sendOtp)
 router.post('/verify-otp', verifyOtp)
 

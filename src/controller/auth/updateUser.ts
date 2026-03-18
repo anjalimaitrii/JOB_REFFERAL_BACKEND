@@ -31,6 +31,12 @@ export const updateUser = async (req: Request, res: Response) => {
     if (designation && designation.length !== 24) {
       delete req.body.designation
     }
+
+    // Handle profile photo upload
+    if (req.file) {
+      req.body.profilePhoto = `${process.env.BACKEND_URL || 'http://localhost:5000'}/uploads/${req.file.filename}`;
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       user._id,
       req.body,

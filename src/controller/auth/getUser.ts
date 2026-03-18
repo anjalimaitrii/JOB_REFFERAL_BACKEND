@@ -39,8 +39,8 @@ export const getUser = async (req: Request, res: Response) => {
 
     return res.json({
       ...userData,
-      company: companyName || userData.company,
-      designation: jobTitle || userData.designation,
+      companyName: companyName || "",
+      jobTitle: jobTitle || "",
     });
   } catch (error) {
     return res.status(500).json({ message: "Error fetching user", error });
