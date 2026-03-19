@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import RequestModel from "../models/request";
 import Notification from "../models/notification";
 import Payment from "../models/payment";
+import { refundQueue } from "../queue/refundQueue";
+import Transaction from "../models/transaction";
 
 
 export const paymentSuccess = async (req: Request, res: Response) => {
@@ -18,13 +20,34 @@ export const paymentSuccess = async (req: Request, res: Response) => {
         request.amount = amount;
 
         await request.save();
+
+
+
         await Payment.create({
             student: request.sender,
             employee: request.receiver,
             request: request._id,
-            amount: request.amount
+            amount: request.amount,
+            status: "paid",
         });
+        await Transaction.create({
+            user: request.sender,
+            type: "debit",
+            amount: request.amount,
+            source: "payment",
+            request: request._id,
+            description: "Paid for referral",
+        });
+        console.log("🚀 Adding job to queue...");
 
+        await refundQueue.add(
+            "autoRefund",
+            { requestId: request._id },
+            {
+                delay: 2 * 60 * 1000,
+            }
+        );
+        console.log("✅ Job added!");
         await Notification.create({
             receiver: request.receiver,
             sender: request.sender,
@@ -48,3 +71,4 @@ export const paymentSuccess = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+

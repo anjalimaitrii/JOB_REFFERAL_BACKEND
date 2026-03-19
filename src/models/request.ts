@@ -18,12 +18,15 @@ const requestSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "accepted", "rejected", "completed"],
+      enum: ["pending", "accepted", "rejected", "completed", "refunded"],
       default: "pending",
     },
     role: {
       type: String,
       required: true
+    },
+    jobId: {
+      type: String
     },
     amount: {
       type: Number,
@@ -32,7 +35,7 @@ const requestSchema = new mongoose.Schema(
 
     paymentStatus: {
       type: String,
-      enum: ["pending", "paid"],
+      enum: ["pending", "paid", "refunded"],
       default: "pending"
     },
   },

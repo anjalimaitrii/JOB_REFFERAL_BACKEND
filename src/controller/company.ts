@@ -33,7 +33,6 @@ export const createCompany = async (req: Request, res: Response) => {
       otherLocations,
       companySize,
       website,
-      jobs,
       isVerified: false, // New companies need admin approval
     });
 

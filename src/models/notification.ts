@@ -23,7 +23,7 @@ const NotificationSchema = new Schema<INotification>(
     type: {
       type: String,
       enum: ["message", "request_accepted", "request_rejected", "referral_completed", "request_received", "payment_success_employee",
-        "payment_success_student"],
+        "payment_success_student", "refund_received", "request_expired"],
       required: true,
     },
     request: {

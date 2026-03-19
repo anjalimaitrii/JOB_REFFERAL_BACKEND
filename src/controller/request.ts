@@ -3,11 +3,12 @@ import RequestModel from "../models/request";
 import Notification from "../models/notification";
 import Payment from '../models/payment';
 import User from '../models/user';
+import Transaction from "../models/transaction";
 
 export const sendRequest = async (req: Request, res: Response) => {
   try {
     const senderId = (req as any).user._id;
-    const { receiver, company, role } = req.body;
+    const { receiver, company, role, jobId } = req.body;
 
     if (!receiver) {
       return res.status(400).json({ message: "Employee ID is required" });
@@ -30,6 +31,7 @@ export const sendRequest = async (req: Request, res: Response) => {
       receiver,
       company,
       role,
+      jobId,
       status: "pending",
     });
     await Notification.create({
@@ -56,7 +58,7 @@ export const getMyRequests = async (req: Request, res: Response) => {
       receiver: employeeId,
     })
       .populate("sender")
-      .populate("company", "name jobs")
+      .populate("company", "name")
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -125,7 +127,7 @@ export const getMySentRequests = async (req: Request, res: Response) => {
       sender: studentId,
     })
       .populate("receiver", "name email")
-      .populate("company", "name jobs")
+      .populate("company", "name")
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -165,6 +167,14 @@ export const markCompleted = async (req: Request, res: Response) => {
         $inc: { wallet: payment.amount }
       });
     }
+    await Transaction.create({
+      user: request.receiver,
+      type: "credit",
+      amount: request.amount,
+      source: "release",
+      request: request._id,
+      description: "Referral completed",
+    });
 
     await Notification.create({
       receiver: request?.sender,

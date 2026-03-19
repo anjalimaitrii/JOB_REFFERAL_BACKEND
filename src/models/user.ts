@@ -98,7 +98,7 @@ const userSchema = new mongoose.Schema(
       default: '',
     },
     designation: {
-      type: String, // String to support "" in existing data
+      type: String,
       default: '',
     },
 
@@ -140,6 +140,10 @@ const userSchema = new mongoose.Schema(
     otp: {
       type: String,
       default: '',
+    },
+    wallet: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }

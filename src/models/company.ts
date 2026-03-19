@@ -1,15 +1,5 @@
 import mongoose from "mongoose";
 
-const JobSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-  },
-  { _id: true }
-);
 
 const CompanySchema = new mongoose.Schema(
   {
@@ -41,7 +31,7 @@ const CompanySchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    jobs: [JobSchema],
+
   },
   { timestamps: true }
 );

@@ -82,7 +82,7 @@ export const getFollowingFeed = async (req: Request, res: Response) => {
 
         const posts = await Post.find({ employee: { $in: employeeIds } })
             .populate("employee", "name profilePhoto designation")
-            .populate("company", "name logo jobs");
+            .populate("company", "name logo");
 
         const filteredPosts = posts
             .map(post => {
@@ -115,7 +115,7 @@ export const getExploreFeed = async (req: Request, res: Response) => {
         const userId = new mongoose.Types.ObjectId((req as any).user._id);
         const posts = await Post.find()
             .populate("employee", "name profilePhoto designation")
-            .populate("company", "name logo jobs")
+            .populate("company", "name logo ")
             .limit(20);
 
         let followedEmployeeIds: string[] = [];
