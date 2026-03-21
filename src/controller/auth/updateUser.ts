@@ -32,9 +32,11 @@ export const updateUser = async (req: Request, res: Response) => {
       delete req.body.designation
     }
 
-    // Handle profile photo upload
+    // Handle profile photo upload via memory storage
     if (req.file) {
-      req.body.profilePhoto = `${process.env.BACKEND_URL || 'http://localhost:5000'}/uploads/${req.file.filename}`;
+      const b64 = req.file.buffer.toString('base64');
+      const mimeType = req.file.mimetype;
+      req.body.profilePhoto = `data:${mimeType};base64,${b64}`;
     }
 
     const updatedUser = await User.findByIdAndUpdate(
