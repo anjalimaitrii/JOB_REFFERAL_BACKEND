@@ -9,9 +9,12 @@ import Transaction from "../models/transaction";
 
 dotenv.config();
 const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017/job_referral";
-mongoose.connect(mongoUri)
-    .then(() => console.log("✅ Worker DB Connected"))
-    .catch(err => console.error("❌ DB Error:", err));
+
+if (mongoose.connection.readyState === 0) {
+    mongoose.connect(mongoUri)
+        .then(() => console.log("✅ Worker DB Connected"))
+        .catch(err => console.error("❌ DB Error:", err));
+}
 
 console.log("🚀 Refund Worker Started");
 const worker = new Worker(

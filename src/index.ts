@@ -18,6 +18,8 @@ import postRoutes from './routes/post';
 import followRoutes from './routes/follow';
 import paymentRoutes from './routes/payment';
 
+// Initialize the worker alongside the main server
+import './queue/worker';
 
 const app = express();
 connectDB();
