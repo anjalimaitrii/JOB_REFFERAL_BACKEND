@@ -44,7 +44,8 @@ export const paymentSuccess = async (req: Request, res: Response) => {
             "autoRefund",
             { requestId: request._id },
             {
-                delay: 2 * 60 * 1000,
+                // delay: 2 * 60 * 1000,
+                delay: 48 * 60 * 60 * 1000, // 48 hours
             }
         );
         console.log("✅ Job added!");
