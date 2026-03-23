@@ -17,8 +17,8 @@ const postSchema = new mongoose.Schema({
         trim: true
     },
     image: {
-        type: String,
-        default: null
+        type: [String],
+        default: []
     },
     reportCount: {
         type: Number,

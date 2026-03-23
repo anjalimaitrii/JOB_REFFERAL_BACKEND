@@ -96,11 +96,7 @@ export const updateRequestStatus = async (req: Request, res: Response) => {
     request.status = status;
     await request.save();
 
-    await Notification.deleteOne({
-      receiver: employeeId,
-      request: request._id,
-      type: "request_received",
-    });
+
 
     await Notification.create({
       receiver: request.sender,
@@ -152,11 +148,12 @@ export const markCompleted = async (req: Request, res: Response) => {
     if (!request) {
       return res.status(404).json({ message: "Request not found" });
     }
-
+    console.log("STEP 1");
     // find payment for this request
     const payment = await Payment.findOne({ request: requestId });
-
+    console.log("STEP 2");
     if (payment && payment.status !== "released") {
+      console.log("STEP 3 updating wallet");
 
       // mark payment released
       payment.status = "released";
@@ -167,15 +164,16 @@ export const markCompleted = async (req: Request, res: Response) => {
         $inc: { wallet: payment.amount }
       });
     }
+    console.log("STEP 4 creating transaction");
     await Transaction.create({
       user: request.receiver,
       type: "credit",
       amount: request.amount,
-      source: "release",
+      source: "payment",
       request: request._id,
       description: "Referral completed",
-    });
-
+    }); console.log("🔥 markCompleted HIT");
+    console.log("STEP 5 creating notification");
     await Notification.create({
       receiver: request?.sender,
       sender: request?.receiver,

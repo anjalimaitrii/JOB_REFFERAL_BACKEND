@@ -22,7 +22,7 @@ export const createPost = async (req: Request, res: Response) => {
             employee: user._id,
             company: user.company,
             content,
-            image
+            image: image || []
         });
 
         res.status(201).json({
