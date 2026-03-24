@@ -17,9 +17,8 @@ export const getUser = async (req: Request, res: Response) => {
 
     const mongoose = require("mongoose");
     if (data.company && mongoose.Types.ObjectId.isValid(data.company)) {
-      await data.populate("companyDetails");
+      await data.populate("company");
     }
-
     let companyName = "";
     let jobTitle = "";
     const userData: any = data.toObject();

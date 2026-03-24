@@ -54,8 +54,9 @@ export const getUsersByRole = async (req: Request, res: Response) => {
     }
 
     const users = await User.find({ role })
-      .select("name email role createdAt personalInfo education experience skills")
+      .populate("company")
       .sort({ createdAt: -1 });
+    console.log(users)
 
     return res.status(200).json({
       success: true,
