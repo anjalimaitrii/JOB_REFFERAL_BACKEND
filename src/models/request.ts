@@ -22,10 +22,12 @@ const requestSchema = new mongoose.Schema(
       default: "pending",
     },
     role: {
-      type: String,
-      required: true
+      type: String
     },
     jobId: {
+      type: String
+    },
+    description: {
       type: String
     },
     amount: {

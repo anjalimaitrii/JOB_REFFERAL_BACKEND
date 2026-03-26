@@ -59,7 +59,7 @@ export const getCollegesWithEmployees = async (
 
     users.forEach((user) => {
       user.education?.forEach((edu: any) => {
-        if (edu.institute) {
+        if (edu.institute && ["Graduation", "Post Graduation"].includes(edu.level)) {
           collegeSet.add(edu.institute);
         }
       });

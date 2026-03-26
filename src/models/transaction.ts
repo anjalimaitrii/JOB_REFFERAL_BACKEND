@@ -21,7 +21,13 @@ const transactionSchema = new mongoose.Schema(
 
         source: {
             type: String,
-            enum: ["payment", "refund", "reward"],
+            enum: ["payment", "refund", "reward", "withdrawal"],
+        },
+
+        status: {
+            type: String,
+            enum: ["pending", "completed", "failed"],
+            default: "completed",
         },
 
         request: {

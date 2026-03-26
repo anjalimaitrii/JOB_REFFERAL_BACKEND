@@ -8,7 +8,7 @@ import Transaction from "../models/transaction";
 export const sendRequest = async (req: Request, res: Response) => {
   try {
     const senderId = (req as any).user._id;
-    const { receiver, company, role, jobId } = req.body;
+    const { receiver, company, role, jobId, description } = req.body;
 
     if (!receiver) {
       return res.status(400).json({ message: "Employee ID is required" });
@@ -32,6 +32,7 @@ export const sendRequest = async (req: Request, res: Response) => {
       company,
       role,
       jobId,
+      description,
       status: "pending",
     });
     await Notification.create({
@@ -153,27 +154,52 @@ export const markCompleted = async (req: Request, res: Response) => {
     const payment = await Payment.findOne({ request: requestId });
     console.log("STEP 2");
     if (payment && payment.status !== "released") {
-      console.log("STEP 3 updating wallet");
+      console.log("STEP 3 updating wallets");
 
       // mark payment released
       payment.status = "released";
       await payment.save();
 
+      // Find admin user
+      const admin = await User.findOne({ role: "admin" });
+
+      const amountToEmp = (payment.amount || 0) * 0.4;
+      const amountToAdmin = (payment.amount || 0) * 0.6;
+
       // credit employee wallet
       await User.findByIdAndUpdate(request.receiver, {
-        $inc: { wallet: payment.amount }
+        $inc: { wallet: amountToEmp }
+      });
+
+      // credit admin wallet if admin exists
+      if (admin) {
+        await User.findByIdAndUpdate(admin._id, {
+          $inc: { wallet: amountToAdmin }
+        });
+
+        // create transaction for admin
+        await Transaction.create({
+          user: admin._id,
+          type: "credit",
+          amount: amountToAdmin,
+          source: "payment",
+          request: request._id,
+          description: "Commission from referral",
+        });
+      }
+
+      // create transaction for employee
+      await Transaction.create({
+        user: request.receiver,
+        type: "credit",
+        amount: amountToEmp,
+        source: "payment",
+        request: request._id,
+        description: "Referral completed (40% share)",
       });
     }
-    console.log("STEP 4 creating transaction");
-    await Transaction.create({
-      user: request.receiver,
-      type: "credit",
-      amount: request.amount,
-      source: "payment",
-      request: request._id,
-      description: "Referral completed",
-    }); console.log("🔥 markCompleted HIT");
-    console.log("STEP 5 creating notification");
+
+    console.log("STEP 4 creating notification");
     await Notification.create({
       receiver: request?.sender,
       sender: request?.receiver,
