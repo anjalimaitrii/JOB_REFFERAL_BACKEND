@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/user";
 import Company from "../models/company";
 import SuccessStory from "../models/successStory";
+import RequestModel from "../models/request";
 
 export const getAdminStats = async (_req: Request, res: Response) => {
   try {
@@ -65,6 +66,25 @@ export const getUsersByRole = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       message: `Error fetching ${req.params.role}s`,
+      error,
+    });
+  }
+};
+
+export const getAllRequests = async (_req: Request, res: Response) => {
+  try {
+    const requests = await RequestModel.find()
+      .populate("sender")
+      .populate("receiver")
+      .populate("company")
+      .sort({ createdAt: -1 });
+    return res.status(200).json({
+      success: true,
+      data: requests
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error fetching requests",
       error,
     });
   }

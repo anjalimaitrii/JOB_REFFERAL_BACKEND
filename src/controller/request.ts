@@ -17,7 +17,7 @@ export const sendRequest = async (req: Request, res: Response) => {
     const existingRequest = await RequestModel.findOne({
       sender: senderId,
       receiver,
-      status: "pending",
+      status: { $in: ["pending", "accepted", "completed"] },
     });
 
     if (existingRequest) {
