@@ -15,7 +15,7 @@ export const updateUser = async (req: Request, res: Response) => {
     console.log("Update User Request Body:", req.body);
     console.log("Original company:", company, "Type:", typeof company);
     console.log("Original designation:", designation, "Type:", typeof designation);
-
+    //
     if (company === "") {
       console.log("Sanitizing company to null");
       req.body.company = null;
