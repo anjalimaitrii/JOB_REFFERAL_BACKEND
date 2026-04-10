@@ -28,9 +28,7 @@ export const updateUser = async (req: Request, res: Response) => {
       delete req.body.company
     }
 
-    if (designation && designation.length !== 24) {
-      delete req.body.designation
-    }
+
 
     // Handle profile photo upload via memory storage
     if (req.file) {
